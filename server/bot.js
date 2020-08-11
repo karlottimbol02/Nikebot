@@ -20,8 +20,8 @@ let html = '';
 // Parameters to set
 
 // user/pass: the email/username for your Nike.com account
-const user = 'ericliang62@yahoo.com';
-const pass = '9879968Bb!';
+const user = 'hamstomj@gmail.com';
+const pass = 'hamstomj920';
 
 // cv_code: 3-digit credit card validation code for the card saved to your Nike.com account
 const cv_code = '123';
