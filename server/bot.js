@@ -2,9 +2,7 @@ const puppeteer = require("puppeteer-extra");
 const pluginStealth = require("puppeteer-extra-plugin-stealth");
 const fs = require("fs");
 const { installMouseHelper } = require("./extras/install_mouse_helper");
-//puppeteer.use(pluginStealth());
 
-// Debugging stuff
 const html_path = "htmls/bot_";
 const screenshot_path = "screenshots/bot_";
 const SimpleNodeLogger = require("simple-node-logger"),
@@ -15,45 +13,23 @@ const SimpleNodeLogger = require("simple-node-logger"),
 
 let html = "";
 
-// ####################################
-// ####################################
-// Parameters to set
-
-// user/pass: the email/username for your Nike.com account
 const email = "hamstomj@gmail.com";
 const pass = "Hamstomj@920";
-// const first_name = "ham";
-// const last_name = "stom";
-// const user_id = "hams354198353";
-// const address_first_line = "2315 Us Highway 275";
-// const city = "Sidney";
-// const state = "lowa";
-// const zipcode = "51652-6078";
-// const phone_number = "2138144239";
-
-// cv_code: 3-digit credit card validation code for the card saved to your Nike.com account
 const card_name = "visa";
 const card_number = "4242424242424242";
 const expire_date = "0124";
 const cv_code = "123";
 
-// size: the shoe size, as you see in the table of sizes on a product page, e.g., 'M 9 / W 10.5'
 const size = "US 12";
 
-// url: url to the shoe page, e.g., 'https://www.nike.com/us/launch/t/kobe-4-protro-wizenard/'
 const url = "https://www.nike.com/au/t/jordan-aerospace-720-shoe-td3XcH/CW7588-100";
 
-// debug: Use debug/logging features?
-// Includes writing updates to log file, writing html snapshots, and taking screenshots
 const debug = true;
 
 // buy: ****WARNING**** if you set this to true it *may* actually make a purchase
 // you can leave this to false and the bot will not "submit order"
 const buy = true;
 
-// ####################################
-// ####################################
-// main flow
 (async () => {
   const class_names = {
     shop_page: {
@@ -89,13 +65,10 @@ const buy = true;
       place_order: "#BtnPurchase",
     },
   };
+
   const args = ["--disable-web-security", "--disable-features=IsolateOrigins,site-per-process"];
 
-  const browser = await puppeteer.launch({
-    ignoreHTTPSErrors: true,
-    headless: false,
-    args,
-  });
+  const browser = await puppeteer.launch({ ignoreHTTPSErrors: true, headless: false, args });
 
   const page = await browser.newPage();
 
@@ -123,7 +96,6 @@ const buy = true;
   await page.goto(url);
   page.waitForNavigation({ waitUntil: "networkidle0" }); // Wait for page to finish loading
 
-  // #### LOG / DEBUG
   if (debug == true) {
     log.info("1. Page loaded");
     html = await page.content();
@@ -141,7 +113,6 @@ const buy = true;
   };
   await page.evaluate(scrollDownSizeForm, class_names);
 
-  // #### LOG / DEBUG
   if (debug == true) {
     log.info("2. Selectors appeared");
     html = await page.content();
@@ -180,7 +151,9 @@ const buy = true;
     const add_to_cart_button = document.querySelectorAll(classes.shop_page.add_to_cart_button)[0];
     return add_to_cart_button.scrollIntoView();
   };
+
   await page.evaluate(scrollDownAddToCartButton, class_names);
+
   if (debug == true) {
     log.info("4. Scrolled to add button");
     html = await page.content();
@@ -196,6 +169,7 @@ const buy = true;
     console.log("add_to_cart_button", add_to_cart_button);
     return add_to_cart_button.click();
   };
+
   await page.evaluate(clickAddToCartButton, class_names);
   if (debug == true) {
     log.info("5. Clicked add button");
@@ -240,7 +214,6 @@ const buy = true;
   await page.waitForSelector(class_names.cart_page.popover_form);
   const clickCartCheckoutButton = async (classes) => {
     const choose_checkout_button = document.querySelectorAll(classes.cart_page.choose_checkout_button)[0];
-    console.log("choose_checkout_button", choose_checkout_button, classes.cart_page.choose_checkout_button);
     return choose_checkout_button.click();
   };
   await page.evaluate(clickCartCheckoutButton, class_names);
@@ -249,7 +222,6 @@ const buy = true;
   await page.waitForSelector(class_names.cart_page.popover_form);
   const scrollDownMemberCheckoutButton = async (classes) => {
     const member_checkout_button = document.querySelectorAll(classes.cart_page.member_checkout_button)[3];
-    console.log("member_checkout_button", member_checkout_button);
     return member_checkout_button.scrollIntoView();
   };
   await page.evaluate(scrollDownMemberCheckoutButton, class_names);
@@ -258,7 +230,6 @@ const buy = true;
   await page.waitForSelector(class_names.cart_page.popover_form);
   const clickMemberCheckoutButton = async (classes) => {
     const member_checkout_button = document.querySelectorAll(classes.cart_page.member_checkout_button)[3];
-    // console.log("member_checkout_button", member_checkout_button);
     return member_checkout_button.click();
   };
   await page.evaluate(clickMemberCheckoutButton, class_names);
@@ -268,7 +239,6 @@ const buy = true;
   await page.waitForSelector(class_names.login_modal.login_form);
   const scrollLoginModal = async (classes) => {
     const login_form = document.querySelectorAll(classes.login_modal.login_form)[0];
-    console.log("login_form", login_form);
     return login_form.scrollIntoView();
   };
   await page.evaluate(scrollLoginModal, class_names);
@@ -291,7 +261,6 @@ const buy = true;
 
   const clickLoginButton = async (classes) => {
     const login_button = document.querySelectorAll(classes.login_modal.login_button)[0];
-    console.log("login_button", login_button);
     return login_button.click();
   };
   // Submit
@@ -320,7 +289,6 @@ const buy = true;
   await page.waitForSelector(class_names.credit_page.checkbox);
   const toggleCheckbox = async (classes) => {
     const checkbox = document.querySelectorAll(classes.credit_page.checkbox)[0];
-    console.log("checkbox", checkbox);
     return checkbox.click();
   };
   await page.evaluate(toggleCheckbox, class_names);
@@ -329,7 +297,6 @@ const buy = true;
   await page.waitForSelector(class_names.credit_page.shipping_submit);
   const confirmShippingAddress = async (classes) => {
     const shipping_submit = document.querySelectorAll(classes.credit_page.shipping_submit)[0];
-    console.log("shipping_submit", shipping_submit);
     return shipping_submit.click();
   };
   await page.evaluate(confirmShippingAddress, class_names);
@@ -339,42 +306,23 @@ const buy = true;
   await page.waitForSelector(class_names.credit_page.billing_submit);
   const confirmBillingAddress = async (classes) => {
     const billing_submit = document.querySelectorAll(classes.credit_page.billing_submit)[0];
-    console.log("billing_submit", billing_submit);
     return billing_submit.click();
   };
   await page.evaluate(confirmBillingAddress, class_names);
   await page.waitFor(1000);
 
-  // await page.waitForSelector(class_names.credit_page.payment_card_option);
-  // const clickPaymentCardOption = async (classes) => {
-  //   const payment_card_option = document.querySelectorAll(classes.credit_page.payment_card_option)[0];
-  //   console.log("payment_card_option", payment_card_option);
-  //   return payment_card_option.click();
-  // };
-  // await page.evaluate(clickPaymentCardOption, class_names);
-  // await page.waitFor(500);
-  // window.parent.postMessage({ childData: "test data" }, "*");
   setTimeout(async function () {
     console.log("start timout process");
 
     await page.waitFor(500);
 
-    // const target_frame = page.frames().find((frame) => {
-    //   console.log("frame", frame, frame.url());
-    //   frame.url().includes("computop-paygate");
-    // });
-
     const elementHandle = await page.$("iframe[id='paymentIFrame']");
-    console.log("elementHandle", elementHandle);
     const target_frame = await elementHandle.contentFrame();
-    console.log("target_frame", target_frame);
 
     await target_frame.waitFor(500);
 
     await target_frame.evaluate((classes) => {
-      console.log("target_framedocument", document, classes.credit_page.credit_form);
       const credit_form = document.querySelectorAll(classes.credit_page.credit_form)[0];
-      console.log("credit_form", credit_form);
       credit_form.scrollIntoView();
     }, class_names);
     await target_frame.waitFor(500);
